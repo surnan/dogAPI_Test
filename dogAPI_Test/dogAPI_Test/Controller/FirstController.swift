@@ -24,31 +24,36 @@ class FirstController: UIViewController {
         let randomImageEndpoint = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
         
         
-        URLSession.shared.downloadTask(with: randomImageEndpoint) { (url, response, err) in
-            if let fileURL = url {
-                print("randomImageEndpoint = \(randomImageEndpoint)")
-                print("file url = ",fileURL)
-                
-                do {
-                    let retrievedData = try Data(contentsOf: fileURL)
-                    let jsonDownloadedData = try JSONSerialization.jsonObject(with: retrievedData, options: []) as! [String:Any]
-                    print(jsonDownloadedData["message"] ?? "")
-                } catch let conversionErr as CocoaError{
-                    print("Localized Description - ", conversionErr.localizedDescription)
-                    print("Code - ",conversionErr.code)
-                    print("User Info - ",conversionErr.userInfo)
-                    print("Original --",conversionErr)
-                } catch {
-                    print("Unable to convert file contents to UIImage", error)
-                }
+        URLSession.shared.dataTask(with: randomImageEndpoint) { (data, response, err) in
+           
+            guard let data = data else {return}
+            
+            let decoder = JSONDecoder()
+            
+            do {
+                let imageData = try decoder.decode(DogImage.self, from: data)
+                guard let imageURL = URL(string: imageData.message) else {return}//we know it's a string from structure of DogImage Struct
+                let task = URLSession.shared.dataTask(with: imageURL, completionHandler: { (data, response, err) in
+                    if let data = data {
+                        print("Data = \(data)")
+                        DispatchQueue.main.async {
+                            self.backgroundImageView.image = UIImage(data: data)
+                        }
+                    }
+                })
+                task.resume()
+            } catch let conversionErr as CocoaError{
+                print("Localized Description - ", conversionErr.localizedDescription)
+                print("Code - ",conversionErr.code)
+                print("User Info - ",conversionErr.userInfo)
+                print("Original --",conversionErr)
+            } catch {
+                print("Unable to convert file contents to UIImage", error)
             }
         }.resume()
-        
         view.addSubview(backgroundImageView)
         setupConstraints()
     }
-    
-    
     
     
     private func setupConstraints(){
@@ -58,3 +63,14 @@ class FirstController: UIViewController {
             ])
     }
 }
+
+/*
+ } catch let conversionErr as CocoaError{
+ print("Localized Description - ", conversionErr.localizedDescription)
+ print("Code - ",conversionErr.code)
+ print("User Info - ",conversionErr.userInfo)
+ print("Original --",conversionErr)
+ } catch {
+ print("Unable to convert file contents to UIImage", error)
+ }
+ */
