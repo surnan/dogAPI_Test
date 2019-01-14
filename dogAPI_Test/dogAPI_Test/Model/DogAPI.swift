@@ -11,9 +11,9 @@ import Foundation
 class DogAPI {
     
     enum Endpoint: String {
-        case temp = "https://dog.ceo/api/breeds/image/random"
+        case randomImageFromAllDogsCollection = "https://dog.ceo/api/breeds/image/random"
         
-        case randomImageFromAllDogsCollection =  "https://images.dog.ceo/breeds/appenzeller/n02107908_3613.jpg"
+        case randomImageFromAllDogsCollection2 =  "https://images.dog.ceo/breeds/appenzeller/n02107908_3613.jpg"
         
         
         

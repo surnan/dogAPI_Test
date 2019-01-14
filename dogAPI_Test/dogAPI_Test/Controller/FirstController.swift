@@ -23,6 +23,7 @@ class FirstController: UIViewController {
 
         let randomImageEndpoint = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
         
+        
         URLSession.shared.downloadTask(with: randomImageEndpoint) { (url, response, err) in
             if let fileURL = url {
                 print("randomImageEndpoint = \(randomImageEndpoint)")
@@ -30,16 +31,20 @@ class FirstController: UIViewController {
                 
                 do {
                     let retrievedData = try Data(contentsOf: fileURL)
-                    DispatchQueue.main.async {
-                        self.backgroundImageView.image = UIImage(data: retrievedData)
-                    }
-                } catch let conversionErr {
-                    print("Unable to convert file contents to UIImage", conversionErr)
+                    let jsonDownloadedData = try JSONSerialization.jsonObject(with: retrievedData, options: []) as! [String:Any]
+                    print(jsonDownloadedData["message"] ?? "")
+                } catch let conversionErr as CocoaError{
+                    print("Localized Description - ", conversionErr.localizedDescription)
+                    print("Code - ",conversionErr.code)
+                    print("User Info - ",conversionErr.userInfo)
+                    print("Original --",conversionErr)
+                } catch {
+                    print("Unable to convert file contents to UIImage", error)
                 }
             }
         }.resume()
+        
         view.addSubview(backgroundImageView)
-//        backgroundImageView.safeFullScreen()
         setupConstraints()
     }
     
