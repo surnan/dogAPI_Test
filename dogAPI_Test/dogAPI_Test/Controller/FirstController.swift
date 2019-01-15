@@ -23,17 +23,10 @@ class FirstController: UIViewController {
 
         let randomImageEndpoint = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
         
-        URLSession.shared.dataTask(with: randomImageEndpoint) { (data, resp, err) in
-            guard let jsonPull = data else {return}
-            let decoder = JSONDecoder()
-            do {
-                let temp = try decoder.decode(DogImage.self, from: jsonPull)
-                guard let tempURL = URL(string: temp.message) else {return}
-                DogAPI.requestImageFile(url: tempURL, completionHandler: self.handleImageFileResponse(image:err:))
-            } catch {
-                print("There was a problem", error)
-            }
-        }.resume()
+        DogAPI.requestJSONFile(url: randomImageEndpoint) { (url, error) in
+            guard let imageURL = url else {return}
+            DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
+        }
         
         
         view.addSubview(backgroundImageView)
@@ -56,3 +49,18 @@ class FirstController: UIViewController {
     }
 }
 
+
+/*
+ let task = URLSession.shared.dataTask(with: randomImageEndpoint) { (data, resp, err) in
+ guard let jsonPull = data else {return}
+ let decoder = JSONDecoder()
+ do {
+ let temp = try decoder.decode(DogImage.self, from: jsonPull)
+ guard let tempURL = URL(string: temp.message) else {return}
+ DogAPI.requestImageFile(url: tempURL, completionHandler: self.handleImageFileResponse(image:err:))
+ } catch {
+ print("There was a problem", error)
+ }
+ }
+ task.resume()
+*/

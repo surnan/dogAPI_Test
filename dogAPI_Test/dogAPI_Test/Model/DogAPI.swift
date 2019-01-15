@@ -30,8 +30,26 @@ class DogAPI {
         }.resume()
     }
     
-    
-
-    
-    
+    class func requestJSONFile(url: URL, completionHandler: @escaping (URL?, Error?)-> Void) {
+        let task = URLSession.shared.dataTask(with: url) { (data, resp, err) in
+            guard let jsonPull = data else {
+                completionHandler(nil, err)
+                return
+            }
+            let decoder = JSONDecoder()
+            do {
+                let tempDogImage = try decoder.decode(DogImage.self, from: jsonPull)
+                guard let tempURL = URL(string: tempDogImage.message) else {
+                    completionHandler(nil, err)
+                    return
+                }
+                completionHandler(tempURL, nil)
+                return
+            } catch {
+                completionHandler(nil, err)
+                return
+            }
+        }
+        task.resume()
+    }
 }
