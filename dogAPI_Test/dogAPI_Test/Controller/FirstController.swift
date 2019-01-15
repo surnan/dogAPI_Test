@@ -20,13 +20,15 @@ class FirstController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let urlToJSON = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
-        DogAPI.requestJSONFile(url: urlToJSON) { (url, error) in
-            guard let imageURL = url else {return}
-            DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
-        }
+        DogAPI.requestJSONFile(completionHandler: self.handleRequestJSONFileResponse(url:err:))
         view.addSubview(backgroundImageView)
         setupConstraints()
+    }
+    
+    
+    func handleRequestJSONFileResponse(url: URL?, err: Error?){
+        guard let imageURL = url else {return}
+        DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
     }
     
     func handleImageFileResponse(image: UIImage?, err: Error?){
@@ -44,4 +46,3 @@ class FirstController: UIViewController {
             ])
     }
 }
-
