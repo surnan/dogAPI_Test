@@ -20,15 +20,11 @@ class FirstController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let randomImageEndpoint = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
-        
-        DogAPI.requestJSONFile(url: randomImageEndpoint) { (url, error) in
+        let urlToJSON = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
+        DogAPI.requestJSONFile(url: urlToJSON) { (url, error) in
             guard let imageURL = url else {return}
             DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
         }
-        
-        
         view.addSubview(backgroundImageView)
         setupConstraints()
     }
@@ -49,18 +45,3 @@ class FirstController: UIViewController {
     }
 }
 
-
-/*
- let task = URLSession.shared.dataTask(with: randomImageEndpoint) { (data, resp, err) in
- guard let jsonPull = data else {return}
- let decoder = JSONDecoder()
- do {
- let temp = try decoder.decode(DogImage.self, from: jsonPull)
- guard let tempURL = URL(string: temp.message) else {return}
- DogAPI.requestImageFile(url: tempURL, completionHandler: self.handleImageFileResponse(image:err:))
- } catch {
- print("There was a problem", error)
- }
- }
- task.resume()
-*/

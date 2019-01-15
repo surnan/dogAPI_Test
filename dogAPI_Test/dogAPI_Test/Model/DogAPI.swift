@@ -31,7 +31,7 @@ class DogAPI {
     }
     
     class func requestJSONFile(url: URL, completionHandler: @escaping (URL?, Error?)-> Void) {
-        let task = URLSession.shared.dataTask(with: url) { (data, resp, err) in
+        URLSession.shared.dataTask(with: url) { (data, resp, err) in
             guard let jsonPull = data else {
                 completionHandler(nil, err)
                 return
@@ -49,7 +49,6 @@ class DogAPI {
                 completionHandler(nil, err)
                 return
             }
-        }
-        task.resume()
+        }.resume()
     }
 }
