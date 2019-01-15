@@ -6,7 +6,7 @@
 //  Copyright © 2019 admin. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class DogAPI {
     
@@ -18,6 +18,20 @@ class DogAPI {
         }
     }
     
+    class func requestImageFile(url: URL, completionHandler: @escaping (UIImage?, Error?) -> Void){
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            guard let tempData = data else {
+                completionHandler(nil, error)
+                return
+            }
+            let downloadedImage = UIImage(data: tempData)
+            completionHandler(downloadedImage, nil)
+            return
+        }.resume()
+    }
+    
+    
 
+    
     
 }
