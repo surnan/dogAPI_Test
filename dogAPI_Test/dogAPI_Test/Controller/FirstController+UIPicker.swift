@@ -19,6 +19,7 @@ extension FirstController {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
         print("Row = \(row)\tComponent = \(component)")
         print("Doggy = \(doggyArray[row])")
     }
@@ -38,14 +39,26 @@ extension FirstController {
         return returnLabel
     }
     
-    
-    
-    
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return "Pick you pooch 🐶  ❤️"
     }
     
     func pickerView(_ pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
         return 50
+    }
+    
+    
+    //MARK:- stuff
+    private func handleJSONFileResponse(url: URL?, error: Error?){
+        guard let imageURL = url else {return}
+        DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
+    }
+    
+    private func handleImageFileResponse(image: UIImage?, err: Error?){
+        if let tempImage = image {
+            DispatchQueue.main.async {
+                self.doggyImageView.image = tempImage
+            }
+        }
     }
 }

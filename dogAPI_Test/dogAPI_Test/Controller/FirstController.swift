@@ -21,6 +21,7 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         
     var breedPicker: UIPickerView = {
        let picker = UIPickerView()
+        
         picker.showsSelectionIndicator = true
         return picker
     }()
@@ -45,24 +46,14 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         breedPicker.delegate = self
         breedPicker.dataSource = self
         view.backgroundColor = .white
-        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
+//        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
         setupUI()
     }
 
-    private func handleJSONFileResponse(url: URL?, error: Error?){
-        guard let imageURL = url else {return}
-        DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
-    }
-    
-    private func handleImageFileResponse(image: UIImage?, err: Error?){
-        if let tempImage = image {
-            DispatchQueue.main.async {
-                self.doggyImageView.image = tempImage
-            }
-        }
-    }
+
 
     private func setupUI(){
+        breedPicker.selectRow(1, inComponent: 0, animated: false)
         [doggyImageView, breedPicker].forEach{screenStackView.insertArrangedSubview($0, at: 0)}
         [titleLabel, screenStackView].forEach{view.addSubview($0)}
         setupConstraints()
