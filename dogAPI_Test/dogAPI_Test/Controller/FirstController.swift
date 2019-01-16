@@ -22,17 +22,14 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     var breedPicker: UIPickerView = {
        let picker = UIPickerView()
         picker.showsSelectionIndicator = true
-        picker.translatesAutoresizingMaskIntoConstraints = false
         return picker
     }()
     
     var doggyImageView: UIImageView = {
         var imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    
     
     var screenStackView: UIStackView = {
        let stack = UIStackView()
@@ -43,30 +40,27 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         return stack
     }()
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         breedPicker.delegate = self
         breedPicker.dataSource = self
         view.backgroundColor = .white
-        let urlToJSON = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
-        DogAPI.requestJSONFile(url: urlToJSON) { (url, error) in
-            guard let imageURL = url else {return}
-            DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
-        }
-        
+        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
         setupUI()
     }
+
+    private func handleJSONFileResponse(url: URL?, error: Error?){
+        guard let imageURL = url else {return}
+        DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
+    }
     
-    func handleImageFileResponse(image: UIImage?, err: Error?){
+    private func handleImageFileResponse(image: UIImage?, err: Error?){
         if let tempImage = image {
             DispatchQueue.main.async {
                 self.doggyImageView.image = tempImage
             }
         }
     }
-    
 
     private func setupUI(){
         [doggyImageView, breedPicker].forEach{screenStackView.insertArrangedSubview($0, at: 0)}
@@ -74,11 +68,8 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         setupConstraints()
     }
     
-    
     private func setupConstraints(){
         NSLayoutConstraint.activate([
-//            doggyImageView.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.25),
-//            doggyImageView.widthAnchor.constraint(lessThanOrEqualToConstant: screenWidth),
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             screenStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),

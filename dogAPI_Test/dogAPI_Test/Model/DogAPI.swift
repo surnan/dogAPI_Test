@@ -30,7 +30,8 @@ class DogAPI {
         }.resume()
     }
     
-    class func requestJSONFile(url: URL, completionHandler: @escaping (URL?, Error?)-> Void) {
+    class func requestJSONFile(completionHandler: @escaping (URL?, Error?)-> Void) {
+        let url = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
         URLSession.shared.dataTask(with: url) { (data, resp, err) in
             guard let jsonPull = data else {
                 completionHandler(nil, err)
