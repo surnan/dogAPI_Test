@@ -10,7 +10,7 @@ import UIKit
 
 class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
 
-    var doggyArray = ["Labrador Retriever", "French Bulldog", "Husky"]
+    var doggyArray = ["Labrador", "French Bulldog", "Akita", "Hound", "Husky"]
     
     var titleLabel : UILabel = {
        var label = UILabel()

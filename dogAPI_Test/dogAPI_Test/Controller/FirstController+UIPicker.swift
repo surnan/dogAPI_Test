@@ -19,7 +19,10 @@ extension FirstController {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
+        
+//        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
+        DogAPI.requestJSONFile(breed: doggyArray[row], completionHandler: self.handleJSONFileResponse(url:error:))
+        
         print("Row = \(row)\tComponent = \(component)")
         print("Doggy = \(doggyArray[row])")
     }

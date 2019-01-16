@@ -10,11 +10,22 @@ import UIKit
 
 class DogAPI {
     
-    enum Endpoint: String {
-        case randomImageFromAllDogsCollection = "https://dog.ceo/api/breeds/image/random"  //link to JSON
+    enum Endpoint {
+        case randomImageFromAllDogsCollection
+        case randomImageForBreed(String)
+        
+        var stringValue: String {
+            switch  self {
+            case .randomImageFromAllDogsCollection:
+                return "https://dog.ceo/api/breeds/image/random"  //link to JSON
+            case .randomImageForBreed(let breed):
+                let temp = breed.lowercased()
+                return "https://dog.ceo/api/breed/\(temp)/images/random"
+            }
+        }
         
         var url: URL {
-            return URL(string: self.rawValue)! //force-unwrapping will be safe here.  It's an enum
+            return URL(string: self.stringValue)! //force-unwrapping will be safe here.  It's an enum
         }
     }
     
@@ -30,9 +41,11 @@ class DogAPI {
         }.resume()
     }
     
-    class func requestJSONFile(completionHandler: @escaping (URL?, Error?)-> Void) {
+    class func requestJSONFile(breed: String, completionHandler: @escaping (URL?, Error?)-> Void) {
         let url = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
-        URLSession.shared.dataTask(with: url) { (data, resp, err) in
+        let url2 = DogAPI.Endpoint.randomImageForBreed(breed).url
+        
+        URLSession.shared.dataTask(with: url2) { (data, resp, err) in
             guard let jsonPull = data else {
                 completionHandler(nil, err)
                 return
