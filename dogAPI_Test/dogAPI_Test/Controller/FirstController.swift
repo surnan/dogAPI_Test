@@ -8,10 +8,20 @@
 
 import UIKit
 
-class FirstController: UIViewController {
+class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+
+    var doggyArray = ["Labrador Retriever", "French Bulldog", "Husky"]
     
+    var titleLabel : UILabel = {
+       var label = UILabel()
+        label.text = " 😊 ❤️ 🐶  Pick your pooch 🐶 ❤️ 😊"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+        
     var breedPicker: UIPickerView = {
        let picker = UIPickerView()
+        picker.showsSelectionIndicator = true
         picker.translatesAutoresizingMaskIntoConstraints = false
         return picker
     }()
@@ -37,14 +47,16 @@ class FirstController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        breedPicker.delegate = self
+        breedPicker.dataSource = self
+        view.backgroundColor = .white
         let urlToJSON = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
         DogAPI.requestJSONFile(url: urlToJSON) { (url, error) in
             guard let imageURL = url else {return}
             DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
         }
         
-        [doggyImageView, breedPicker].forEach{screenStackView.insertArrangedSubview($0, at: 0)}
-        view.addSubview(screenStackView)
+        setupUI()
     }
     
     func handleImageFileResponse(image: UIImage?, err: Error?){
@@ -55,9 +67,21 @@ class FirstController: UIViewController {
         }
     }
     
+
+    private func setupUI(){
+        [doggyImageView, breedPicker].forEach{screenStackView.insertArrangedSubview($0, at: 0)}
+        [titleLabel, screenStackView].forEach{view.addSubview($0)}
+        setupConstraints()
+    }
+    
+    
     private func setupConstraints(){
         NSLayoutConstraint.activate([
-            screenStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+//            doggyImageView.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: 0.25),
+//            doggyImageView.widthAnchor.constraint(lessThanOrEqualToConstant: screenWidth),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            screenStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             screenStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             screenStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             screenStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
