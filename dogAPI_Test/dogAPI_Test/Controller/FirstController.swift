@@ -10,13 +10,30 @@ import UIKit
 
 class FirstController: UIViewController {
     
+    var breedPicker: UIPickerView = {
+       let picker = UIPickerView()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
+    }()
     
-    var backgroundImageView: UIImageView = {
+    var doggyImageView: UIImageView = {
         var imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
+    
+    var screenStackView: UIStackView = {
+       let stack = UIStackView()
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 20
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        return stack
+    }()
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,22 +42,25 @@ class FirstController: UIViewController {
             guard let imageURL = url else {return}
             DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
         }
-        view.addSubview(backgroundImageView)
-        setupConstraints()
+        
+        [doggyImageView, breedPicker].forEach{screenStackView.insertArrangedSubview($0, at: 0)}
+        view.addSubview(screenStackView)
     }
     
     func handleImageFileResponse(image: UIImage?, err: Error?){
         if let tempImage = image {
             DispatchQueue.main.async {
-                self.backgroundImageView.image = tempImage
+                self.doggyImageView.image = tempImage
             }
         }
     }
     
     private func setupConstraints(){
         NSLayoutConstraint.activate([
-            backgroundImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            backgroundImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            screenStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            screenStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            screenStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            screenStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             ])
     }
 }
