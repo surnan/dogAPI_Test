@@ -9,19 +9,18 @@
 import UIKit
 
 class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
-
-    var doggyArray = ["Labrador", "French Bulldog", "Akita", "Hound", "Husky"]
+    
+    var doggyArray = ["No Dogs Found", "😭   😭   😭   😭"]
     
     var titleLabel : UILabel = {
-       var label = UILabel()
+        var label = UILabel()
         label.text = " 😊 ❤️ 🐶  Pick your pooch 🐶 ❤️ 😊"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-        
+    
     var breedPicker: UIPickerView = {
-       let picker = UIPickerView()
-        
+        let picker = UIPickerView()
         picker.showsSelectionIndicator = true
         return picker
     }()
@@ -33,7 +32,7 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
     }()
     
     var screenStackView: UIStackView = {
-       let stack = UIStackView()
+        let stack = UIStackView()
         stack.axis = .vertical
         stack.alignment = .center
         stack.spacing = 20
@@ -41,44 +40,30 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         return stack
     }()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         breedPicker.delegate = self
         breedPicker.dataSource = self
         view.backgroundColor = .white
-//        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
         setupUI()
     }
 
-    
-    
-    var breedImageArray = [BreedImage]()
-    var breedsArray = [String]()
-    
-    fileprivate func loadDOogBreedPicker() {
-        let urlString = "https://dog.ceo/api/breeds/list/all"
-        let url = URL(string: urlString)!
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            
-            guard let breedData = data else {return}
-            let decode = JSONDecoder()
-            let temp = try! decode.decode(BreedImage.self, from: breedData)
-            let tempBreeds = temp.breeds
-            var tempBreedKeys = tempBreeds.map{$0.key}
-            tempBreedKeys =  tempBreedKeys.sorted()
-            print(tempBreedKeys)
-            }.resume()
-    }
-    
     private func setupUI(){
+        DogAPI.requestAllDogBreeds(completionHandler: handleRequestAllDogs.self)
         breedPicker.selectRow(1, inComponent: 0, animated: false)
         [doggyImageView, breedPicker].forEach{screenStackView.insertArrangedSubview($0, at: 0)}
         [titleLabel, screenStackView].forEach{view.addSubview($0)}
         setupConstraints()
     }
-    
+
+    private func handleRequestAllDogs(breeds: [String]?, error: Error?){
+        guard let verifiedBreeds = breeds else {return}
+        doggyArray = verifiedBreeds
+        DispatchQueue.main.async {
+            self.breedPicker.reloadAllComponents()
+        }
+    }
+
     private func setupConstraints(){
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),

@@ -19,12 +19,7 @@ extension FirstController {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        
-//        DogAPI.requestJSONFile(completionHandler: self.handleJSONFileResponse(url:error:))
         DogAPI.requestJSONFile(breed: doggyArray[row], completionHandler: self.handleJSONFileResponse(url:error:))
-        
-        print("Row = \(row)\tComponent = \(component)")
-        print("Doggy = \(doggyArray[row])")
     }
     
     func pickerView(_ pickerView: UIPickerView, viewForRow row: Int, forComponent component: Int, reusing view: UIView?) -> UIView {
@@ -38,7 +33,6 @@ extension FirstController {
             label.textAlignment = .center
             return label
         }()
-        
         return returnLabel
     }
     
@@ -50,8 +44,7 @@ extension FirstController {
         return 50
     }
     
-    
-    //MARK:- stuff
+    //MARK:- DogAPI Functions for maintaining "Private"
     private func handleJSONFileResponse(url: URL?, error: Error?){
         guard let imageURL = url else {return}
         DogAPI.requestImageFile(url: imageURL, completionHandler: self.handleImageFileResponse(image:err:))
