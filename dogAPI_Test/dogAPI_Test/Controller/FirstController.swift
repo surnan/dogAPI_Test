@@ -41,6 +41,7 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         return stack
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         breedPicker.delegate = self
@@ -50,8 +51,27 @@ class FirstController: UIViewController, UIPickerViewDelegate, UIPickerViewDataS
         setupUI()
     }
 
-
-
+    
+    
+    var breedImageArray = [BreedImage]()
+    var breedsArray = [String]()
+    
+    fileprivate func loadDOogBreedPicker() {
+        let urlString = "https://dog.ceo/api/breeds/list/all"
+        let url = URL(string: urlString)!
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            guard let breedData = data else {return}
+            let decode = JSONDecoder()
+            let temp = try! decode.decode(BreedImage.self, from: breedData)
+            let tempBreeds = temp.breeds
+            var tempBreedKeys = tempBreeds.map{$0.key}
+            tempBreedKeys =  tempBreedKeys.sorted()
+            print(tempBreedKeys)
+            }.resume()
+    }
+    
     private func setupUI(){
         breedPicker.selectRow(1, inComponent: 0, animated: false)
         [doggyImageView, breedPicker].forEach{screenStackView.insertArrangedSubview($0, at: 0)}

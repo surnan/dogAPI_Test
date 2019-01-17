@@ -12,3 +12,15 @@ struct DogImage: Codable {
     let status: String
     let message: String
 }
+
+
+struct BreedImage: Codable {
+    let status: String
+    let breeds: [String:[String]]
+    
+    enum CodingKeys: String, CodingKey {
+        case status
+        case breeds = "message"
+    }
+    
+}

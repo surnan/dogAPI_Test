@@ -13,14 +13,16 @@ class DogAPI {
     enum Endpoint {
         case randomImageFromAllDogsCollection
         case randomImageForBreed(String)
+        case allDogBreeds
         
         var stringValue: String {
             switch  self {
             case .randomImageFromAllDogsCollection:
                 return "https://dog.ceo/api/breeds/image/random"  //link to JSON
             case .randomImageForBreed(let breed):
-                let temp = breed.lowercased()
-                return "https://dog.ceo/api/breed/\(temp)/images/random"
+                return "https://dog.ceo/api/breed/\(breed.lowercased())/images/random"
+            case .allDogBreeds:
+                return "https://dog.ceo/api/breeds/list/all"
             }
         }
         
@@ -42,10 +44,9 @@ class DogAPI {
     }
     
     class func requestJSONFile(breed: String, completionHandler: @escaping (URL?, Error?)-> Void) {
-        let url = DogAPI.Endpoint.randomImageFromAllDogsCollection.url
-        let url2 = DogAPI.Endpoint.randomImageForBreed(breed).url
+        let url = DogAPI.Endpoint.randomImageForBreed(breed).url
         
-        URLSession.shared.dataTask(with: url2) { (data, resp, err) in
+        URLSession.shared.dataTask(with: url) { (data, resp, err) in
             guard let jsonPull = data else {
                 completionHandler(nil, err)
                 return
